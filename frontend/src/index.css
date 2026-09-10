@@ -16,11 +16,11 @@
 html,
 body,
 #root {
-  min-height: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 body {
-  margin: 0;
   background: #f4efe6;
   color: #1a1714;
   font-family: var(--font-sans);
@@ -30,4 +30,35 @@ body {
 ::selection {
   background: #c45c38;
   color: #faf7f1;
+}
+
+/* ─── Thin custom scrollbar for sidebar & main content ─── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+/* ─── Ensure pointer cursor on all buttons & interactive controls ─── */
+button,
+[role="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
 }

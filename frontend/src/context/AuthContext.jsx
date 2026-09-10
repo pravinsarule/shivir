@@ -1,63 +1,76 @@
 import { createContext, useContext, useMemo, useState } from 'react'
 
-const USERS = [
-  {
-    email: 'volunteer@shibir.org',
-    password: 'shibir123',
-    name: 'Meera Joshi',
-    role: 'Field Volunteer',
-  },
-  {
-    email: 'admin@shibir.org',
-    password: 'admin123',
-    name: 'Arjun Deshmukh',
-    role: 'Programme Lead',
-  },
-]
+const API_BASE_URL = 'http://localhost:5000/api'
 
 const AuthContext = createContext(null)
 
-function readStoredUser() {
+function readStoredSession() {
   try {
-    const raw = localStorage.getItem('shibir-user')
-    return raw ? JSON.parse(raw) : null
-  } catch {
-    return null
-  }
+    const rawUser = localStorage.getItem('shibir-user')
+    const token = localStorage.getItem('shibir-token')
+    if (rawUser && token) {
+      return { user: JSON.parse(rawUser), token }
+    }
+  } catch {}
+  return { user: null, token: null }
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(readStoredUser)
+  const initialSession = readStoredSession()
+  const [user, setUser] = useState(initialSession.user)
+  const [token, setToken] = useState(initialSession.token)
 
   const value = useMemo(
     () => ({
       user,
-      login(email, password) {
-        const found = USERS.find(
-          (entry) =>
-            entry.email.toLowerCase() === email.trim().toLowerCase() &&
-            entry.password === password
-        )
+      token,
+      async login(email, password) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          })
 
-        if (!found) {
-          return { ok: false, message: 'These details do not match our volunteer records.' }
-        }
+          const data = await res.json()
 
-        const session = {
-          email: found.email,
-          name: found.name,
-          role: found.role,
+          if (!res.ok || !data.success) {
+            return {
+              ok: false,
+              message: data.message || 'Login failed. Please check your credentials.',
+            }
+          }
+
+          localStorage.setItem('shibir-user', JSON.stringify(data.user))
+          localStorage.setItem('shibir-token', data.token)
+          setUser(data.user)
+          setToken(data.token)
+
+          return { ok: true, user: data.user }
+        } catch (err) {
+          console.error('Login error:', err)
+          return {
+            ok: false,
+            message: 'Unable to connect to backend server. Make sure Node backend is running.',
+          }
         }
-        localStorage.setItem('shibir-user', JSON.stringify(session))
-        setUser(session)
-        return { ok: true }
+      },
+      setUserAndToken(newUser, newToken) {
+        localStorage.setItem('shibir-user', JSON.stringify(newUser))
+        localStorage.setItem('shibir-token', newToken)
+        setUser(newUser)
+        setToken(newToken)
       },
       logout() {
         localStorage.removeItem('shibir-user')
+        localStorage.removeItem('shibir-token')
         setUser(null)
+        setToken(null)
       },
     }),
-    [user]
+    [user, token]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
