@@ -41,7 +41,7 @@ export default function SetupPassword() {
 
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/auth/setup-password', {
+      const res = await fetch('https://backend-729310986605.asia-south1.run.app/api/auth/setup-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),

@@ -1,4 +1,4 @@
-export const API_PEOPLE = 'http://localhost:5000/api/people';
+export const API_PEOPLE = 'https://backend-729310986605.asia-south1.run.app/api/people';
 
 export const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', section: null },

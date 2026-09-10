@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useState } from 'react'
 
-const API_BASE_URL = 'http://localhost:5000/api'
+const API_BASE_URL = 'https://backend-729310986605.asia-south1.run.app/api'
 
 const AuthContext = createContext(null)
 

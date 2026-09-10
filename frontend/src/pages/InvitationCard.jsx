@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, Ticket } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000/api/param-mitra';
+const API_BASE = 'https://backend-729310986605.asia-south1.run.app/api/param-mitra';
 
 export default function InvitationCard() {
   const tokenNumber = decodeURIComponent(window.location.pathname.split('/').pop() || '');
